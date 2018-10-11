@@ -70,6 +70,7 @@ int main() {
         int pid = fork();
         if (pid == 0)//Child
         {
+          int childpid=getpid();
           execvp(argsarray[0], argsarray);
           printf("Couldn't do command\n");
         }
@@ -77,6 +78,10 @@ int main() {
         //This is the parent
         else
         {
+          if(childpid!=pid)
+          {
+            printf("Pid is different");
+          }
           printf("pid:%d ",pid);
           int status;
           wait(&status);
