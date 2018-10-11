@@ -16,6 +16,7 @@ int main() {
 
     while(1)
     {
+      int chk=0;
       for(i = 0; i < 20; i++)
       {
         argsarray[i] = (char* )malloc(100 * sizeof(char));
@@ -76,6 +77,7 @@ int main() {
             }
             temp[z]=NULL;
 
+            /*
             i=i+1;
             z=0;
             for(int j=0;i<size;i++)
@@ -84,8 +86,10 @@ int main() {
               printf("Argsarray has: %s\n",argsarray[j]);
               z++;
             }
-
+            size=z;
             argsarray[z]=NULL;
+            */
+            chk=1;
 
             int pid = fork();
             if (pid == 0)//Child
@@ -102,11 +106,59 @@ int main() {
               wait(&status);
               printf("status:%d\n",WEXITSTATUS(status));
             }
-            //break;
+            break;
           }
         }
 
+        int j=0;
+        if(chk == 1)
+        {
+          for(int i=0;i<size;i++)
+          {
+            if(strcmp(argsarray[i],";") == 0)
+            {
+              i=i+1;
+              while(1)
+              {
+                temp[j]=argsarray[i];
+                printf("HWIHDS: %s\n",temp[j]);
+                i++;
+                j++;
+                if(argsarray[i]==NULL)
+                {
+                  break;
+                }
+              }
+              temp[j]=NULL;
+              int pid = fork();
+              if (pid == 0)//Child
+              {
+                execvp(temp[0], temp);
+                printf("Couldn't do command in temp2\n");
+              }
 
+              //This is the parent
+              else
+              {
+                printf("pid:%d ",pid);
+                int status;
+                wait(&status);
+                printf("status:%d\n",WEXITSTATUS(status));
+              }
+            }
+          }
+
+        }
+
+        if(chk ==1)
+        {
+          continue;
+        }
+
+        for(i=0;i<size;i++)
+        {
+          printf("ARGGGGG[%d]: %s\n",i,argsarray[i]);
+        }
         int pid = fork();
         if (pid == 0)//Child
         {
