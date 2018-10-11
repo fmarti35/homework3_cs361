@@ -10,17 +10,24 @@
 int main() {
   char line[500];
   char *argsarray[20];
-  char* path= "/bin/";
+  //char* path= "/bin/";
   //int j=0;
   char fullpath[20];
   int i;
   int size;
 
+/*
   for(i = 0; i < 20; i++)
+  {
     argsarray[i] = (char* )malloc(100 * sizeof(char));
-
+  }
+*/
     while(1)
     {
+      for(i = 0; i < 20; i++)
+      {
+        argsarray[i] = (char* )malloc(100 * sizeof(char));
+      }
         printf("CS361 >");
         fgets(line,500,stdin);
 
@@ -30,11 +37,20 @@ int main() {
 
 	      if(strcmp(line,"exit") == 0)
         {
+          for(i=0;i<20;i++)
+          {
+            if(argsarray[i] == NULL)
+            {
+              free (argsarray[i]);
+            }
+          }
           break;
         }
 
         char *word = strtok(line, " ");
         i=0;
+
+        //if()
 
         while(word)
         {
@@ -48,15 +64,8 @@ int main() {
 
         for(i=0;i<size;i++)
         {
-          printf("arg[%d]: %s",i,argsarray[i]);
+          printf("arg[%d]: %s\n",i,argsarray[i]);
         }
-        /*
-        for(i=0;i<strlen(progpath);i++) //Deletes "\n"
-        {
-          if(propath[i]=="\n")
-            propath[i]='/0';
-        }
-        */
 
         int pid = fork();
         if (pid == 0)//Child
