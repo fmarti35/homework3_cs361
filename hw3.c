@@ -171,7 +171,7 @@ int main() {
         {
           if(pid < 0)
           {
-            printf("pid: error");
+            perror("pid: error");
           }
           else
             printf("pid:%d ",pid);
