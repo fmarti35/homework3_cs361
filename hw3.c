@@ -95,6 +95,7 @@ int main() {
             if (pid == 0)//Child
             {
               execvp(temp[0], temp);
+              exit(3);
               printf("Couldn't do command in temp\n");
             }
 
@@ -134,6 +135,7 @@ int main() {
               if (pid == 0)//Child
               {
                 execvp(temp[0], temp);
+                exit(2);
                 printf("Couldn't do command in temp2\n");
               }
 
@@ -164,6 +166,7 @@ int main() {
         if (pid == 0)//Child
         {
           execvp(argsarray[0], argsarray);
+          exit(1);
           printf("Couldn't do command\n");
         }
 
