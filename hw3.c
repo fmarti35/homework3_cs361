@@ -159,6 +159,7 @@ int main() {
         {
           printf("ARGGGGG[%d]: %s\n",i,argsarray[i]);
         }
+
         int pid = fork();
         if (pid == 0)//Child
         {
@@ -171,14 +172,14 @@ int main() {
         {
           if(pid < 0)
           {
-            perror("pid: error");
+            perror("pid: error ");
           }
           else
-            printf("pid:%d ",pid);
-
-          int status;
-          wait(&status);
-          printf("status:%d\n",WEXITSTATUS(status));
+          {
+            int status;
+            wait(&status);
+            printf("pid:%d status:%d\n",getpid(),WEXITSTATUS(status));
+          }
         }
 
       }
