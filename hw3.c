@@ -181,7 +181,7 @@ int main() {
           {
             int status;
             wait(&status);
-            printf("pid:%d status:%d\n",getpid(),WEXITSTATUS(status));
+            printf("pid:%d status:%d\n",pid,WEXITSTATUS(status));
           }
         }
 
