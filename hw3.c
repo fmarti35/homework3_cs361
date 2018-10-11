@@ -77,9 +77,10 @@ int main() {
         //This is the parent
         else
         {
+          printf("pid:%d ",pid);
           int status;
           wait(&status);
-          printf("pid: %d status: %d\n", pid,WEXITSTATUS(status));
+          printf("status:%d\n",WEXITSTATUS(status));
         }
 
       }
