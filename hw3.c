@@ -229,7 +229,7 @@ int main() {
             printf("pid:%d status:%d\n",pid,WEXITSTATUS(status));
           }
         }
-
+        return 0;
       }
 
 }
