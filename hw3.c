@@ -8,14 +8,19 @@
 #include <fcntl.h>
 
 void sigint_handler(int sig){
-  char msg[] = "Signal handled.  Deal with it.\n";
+  char msg[] = "\ncaught sigint\nCS361> ";
   write(1, msg, sizeof(msg));
-  exit(0);
 }
 
+void sigin_handler(int sig){
+  char msg[] = "\ncaught sigstp\nCS361> ";
+  write(1, msg, sizeof(msg));
+}
 
 int main() {
   signal(SIGINT, sigint_handler);
+  signal(SIGTSTP, sigin_handler);
+
   char line[500];
   char *argsarray[20];
   char *temp[20];
@@ -34,7 +39,7 @@ int main() {
       {
         temp[i] = (char* )malloc(100 * sizeof(char));
       }
-        printf("CS361 >");
+        printf("CS361 > ");
         fgets(line,500,stdin);
 
         size_t length = strlen(line);
