@@ -5,16 +5,30 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
+#include <signal.h>
+#include <setjmp.h>
 #include <fcntl.h>
 
+jmp_buf lmao;
+
 void sigint_handler(int sig){
-  char msg[] = "\ncaught sigint\nCS361> ";
+  char msg[] = "\ncaught sigint\n";
   write(1, msg, sizeof(msg));
+  longjmp(lmao, 4);
 }
 
 void sigin_handler(int sig){
-  char msg[] = "\ncaught sigstp\nCS361> ";
+  char msg[] = "\ncaught sigstp\n";
   write(1, msg, sizeof(msg));
+  longjmp(lmao, 3);
+}
+
+void sigin_child(int sig){
+  kill(getpid(), SIGTSTP);
+}
+
+void sigint_child(int sig){
+  kill(getpid(), SIGINT);
 }
 
 int main() {
@@ -26,9 +40,12 @@ int main() {
   char *temp[20];
   int i;
   int size;
+  //jmp_buf env;
 
     while(1)
     {
+      setjmp(lmao);
+
       int chk=0;
       for(i = 0; i < 20; i++)
       {
@@ -75,17 +92,17 @@ int main() {
 
         for(i=0;i<size;i++)
         {
-          printf("arg[%d]: %s\n",i,argsarray[i]);
+          //printf("arg[%d]: %s\n",i,argsarray[i]);
           int z=0;
 
           if(strcmp(argsarray[i],";") == 0)
           {
-            printf("Detected\n");
+            //printf("Detected\n");
 
             for(int j=0;j<i;j++)
             {
               strcpy(temp[j],argsarray[j]);
-              printf("TEMP HAS: %s\n", temp[j]);
+              //printf("TEMP HAS: %s\n", temp[j]);
               z++;
             }
             temp[z]=NULL;
@@ -107,6 +124,8 @@ int main() {
             int pid = fork();
             if (pid == 0)//Child
             {
+              signal(SIGINT,sigint_child);
+              signal(SIGTSTP,sigin_child);
               execvp(temp[0], temp);
               exit(3);
               printf("Couldn't do command in temp\n");
@@ -129,12 +148,12 @@ int main() {
 
           if(strcmp(argsarray[i],">") == 0)
           {
-            printf("Detected the overwrite in file\n");
-            printf("The last element is: %s\n",argsarray[size-1]);
+            //printf("Detected the overwrite in file\n");
+            //printf("The last element is: %s\n",argsarray[size-1]);
             for(int j=0;j<i;j++)
             {
               strcpy(temp[j],argsarray[j]);
-              printf("TEMP HAS: %s\n", temp[j]);
+              //printf("TEMP HAS: %s\n", temp[j]);
               z++;
             }
 
@@ -144,18 +163,22 @@ int main() {
 
             if(retval < 0)
             {
-              perror("We got a problem here!!!!!!!!!!!!!!!!!\n");
-              exit(6);
+              perror("We got a problem here!\n");
+              //exit(6);
             }
 
             //fflush(stdout);
             dup2(retval, 1);
+            chk=1;
 
             int pid = fork();
             if (pid == 0)//Child
             {
+              signal(SIGINT,sigint_child);
+              signal(SIGTSTP,sigin_child);
+
               execvp(temp[0], temp);
-              exit(4);
+              //exit(4);
               printf("Couldn't do command in temp '<'\n");
             }
 
@@ -183,7 +206,7 @@ int main() {
               while(1)
               {
                 temp[j]=argsarray[i];
-                printf("HWIHDS: %s\n",temp[j]);
+                //printf("HWIHDS: %s\n",temp[j]);
                 i++;
                 j++;
                 if(argsarray[i]==NULL)
@@ -222,14 +245,19 @@ int main() {
           continue;
         }
 
+        /*
         for(i=0;i<size;i++)
         {
           printf("ARGGGGG[%d]: %s\n",i,argsarray[i]);
         }
+        */
 
         int pid = fork();
         if (pid == 0)//Child
         {
+          signal(SIGINT,sigint_child);
+          signal(SIGTSTP,sigin_child);
+
           execvp(argsarray[0], argsarray);
           //exit(1);
           printf("Couldn't do command\n");
