@@ -115,10 +115,14 @@ int main() {
             //This is the parent
             else
             {
-              printf("pid:%d ",pid);
+              if(pid < 0)
+              {
+                perror("pid: error ");
+              }
+
               int status;
               wait(&status);
-              printf("status:%d\n",WEXITSTATUS(status));
+              printf("pid:%d status:%d\n", pid, WEXITSTATUS(status));
             }
             break;
           }
@@ -160,10 +164,9 @@ int main() {
             {
               close(retval);
               dup2(2,1);
-              printf("pid:%d ",pid);
               int status;
               wait(&status);
-              printf("status:%d\n",WEXITSTATUS(status));
+              printf("pid:%d status:%d\n", pid, WEXITSTATUS(status));
             }
             break;
           }
@@ -200,6 +203,11 @@ int main() {
               //This is the parent
               else
               {
+                if(pid < 0)
+                {
+                  perror("pid: error ");
+                }
+
                 printf("pid:%d ",pid);
                 int status;
                 wait(&status);
@@ -243,5 +251,4 @@ int main() {
           }
         }
       }
-      return 256;
 }
