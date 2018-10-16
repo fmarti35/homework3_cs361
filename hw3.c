@@ -109,6 +109,51 @@ int main() {
             }
             break;
           }
+
+          if(strcmp(argsarray[i],">") == 0)
+          {
+            printf("Detected the overwrite in file\n");
+            printf("The last element is: %s\n",argsarray[size-1]);
+            for(int j=0;j<i;j++)
+            {
+              strcpy(temp[j],argsarray[j]);
+              printf("TEMP HAS: %s\n", temp[j]);
+              z++;
+            }
+
+            temp[z]=NULL;
+
+            int retval = open(argsarray[size-1], O_CREAT | O_WRONLY | O_TRUNC, S_IWUSR | S_IRUSR);
+
+            if(retval < 0)
+            {
+              perror("We got a problem here!!!!!!!!!!!!!!!!!\n");
+              exit(6);
+            }
+
+            //fflush(stdout);
+            dup2(retval, 1);
+
+            int pid = fork();
+            if (pid == 0)//Child
+            {
+              execvp(temp[0], temp);
+              exit(4);
+              printf("Couldn't do command in temp '<'\n");
+            }
+
+            //This is the parent
+            else
+            {
+              close(retval);
+              dup2(2,1);
+              printf("pid:%d ",pid);
+              int status;
+              wait(&status);
+              printf("status:%d\n",WEXITSTATUS(status));
+            }
+            break;
+          }
         }
 
         int j=0;
@@ -149,7 +194,6 @@ int main() {
               }
             }
           }
-
         }
 
         if(chk ==1)
@@ -166,7 +210,7 @@ int main() {
         if (pid == 0)//Child
         {
           execvp(argsarray[0], argsarray);
-          exit(1);
+          //exit(1);
           printf("Couldn't do command\n");
         }
 
@@ -177,6 +221,7 @@ int main() {
           {
             perror("pid: error ");
           }
+
           else
           {
             int status;
