@@ -7,7 +7,15 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 
+void sigint_handler(int sig){
+  char msg[] = "Signal handled.  Deal with it.\n";
+  write(1, msg, sizeof(msg));
+  exit(0);
+}
+
+
 int main() {
+  signal(SIGINT, sigint_handler);
   char line[500];
   char *argsarray[20];
   char *temp[20];
@@ -230,5 +238,4 @@ int main() {
           }
         }
       }
-    return 0;
 }
